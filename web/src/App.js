@@ -39,7 +39,21 @@ function App() {
         </form>
       </aside>
       <main>
-
+        <ul>
+          {[1,2,3].map((item, key) => 
+          <li className="dev-item" key={key}>
+            <header>
+              <img src="http://localhost:5000/avatar.png" alt="Fulano de tal"/>
+              <div className="user-info">
+                <strong>Fulano de Tal</strong>
+                <span>ReactJS, React Native, Node.js</span>
+              </div>
+            </header>
+            <p>Programador por profissão e também nas horas vagas</p>
+            <a href="https://github.com/javascripto">Acessar perfil no Github</a>
+          </li>
+          )}
+        </ul>
       </main>
     </div>
   );
