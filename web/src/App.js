@@ -5,6 +5,8 @@ import './App.css';
 import './Main.css';
 import './Sidebar.css';
 
+import avatar from './avatar.svg';
+
 function App() {
 
   return (
@@ -43,7 +45,7 @@ function App() {
           {[1,2,3].map((item, key) => 
           <li className="dev-item" key={key}>
             <header>
-              <img src="http://localhost:5000/avatar.png" alt="Fulano de tal"/>
+              <img src={avatar} alt="Fulano de tal"/>
               <div className="user-info">
                 <strong>Fulano de Tal</strong>
                 <span>ReactJS, React Native, Node.js</span>
