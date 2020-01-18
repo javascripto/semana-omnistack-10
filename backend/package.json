@@ -11,5 +11,9 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.2"
+  },
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "postinstall": "node --eval=\"!require('fs').existsSync('.env') && require('fs').copyFileSync('.env.example', '.env')\""
   }
 }
