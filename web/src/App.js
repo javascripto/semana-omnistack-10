@@ -8,9 +8,17 @@ import './Sidebar.css';
 
 import avatar from './avatar.svg';
 
+const getDevExample = () => ({
+  name: 'Fulano de Tal',
+  avatar_url: avatar,
+  techs: ['ReactJS', 'React Native', 'Node.js'],
+  bio: 'Programador por profissão e também nas horas vagas',
+  github_username: 'javascripto',
+  _id: Math.random()
+});
 
 function App() {
-  const [devs, setDevs] = useState([]);
+  const [devs, setDevs] = useState(Array.from([1, 2, 3], i => getDevExample()));
   const [techs, setTechs] = useState('');
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
@@ -31,7 +39,6 @@ function App() {
     (async function loadDevs() {
       const response = await api.get('/devs');
       setDevs(response.data);
-      console.log(devs);
     })();
   }, []);
 
@@ -44,12 +51,10 @@ function App() {
       longitude,
     });
 
-    console.log(response.data);
+    setDevs([...devs, response.data]);
 
-    setGithubUsername('');
     setTechs('');
-    setLatitude('');
-    setLongitude('');
+    setGithubUsername('');
   }
 
   return (
@@ -108,19 +113,19 @@ function App() {
       </aside>
       <main>
         <ul>
-          {[1,2,3].map((item, key) => 
-          <li className="dev-item" key={key}>
-            <header>
-              <img src={avatar} alt="Fulano de tal"/>
-              <div className="user-info">
-                <strong>Fulano de Tal</strong>
-                <span>ReactJS, React Native, Node.js</span>
-              </div>
-            </header>
-            <p>Programador por profissão e também nas horas vagas</p>
-            <a href="https://github.com/javascripto">Acessar perfil no Github</a>
-          </li>
-          )}
+          {devs.map(({ name, avatar_url, techs, bio, github_username, _id }) => (
+            <li className="dev-item" key={_id}>
+              <header>
+                <img src={avatar_url} alt="Fulano de tal"/>
+                <div className="user-info">
+                  <strong>{name}</strong>
+                  <span>{techs.join(', ')}</span>
+                </div>
+              </header>
+              <p>{bio}</p>
+              <a href={`https://github.com/${github_username}`}>Acessar perfil no Github</a>
+            </li>
+          ))}
         </ul>
       </main>
     </div>
