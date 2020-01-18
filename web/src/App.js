@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from './services/api';
+import { DevItems } from './components/DevItem';
 
 import './global.css';
 import './App.css';
@@ -113,19 +114,7 @@ function App() {
       </aside>
       <main>
         <ul>
-          {devs.map(({ name, avatar_url, techs, bio, github_username, _id }) => (
-            <li className="dev-item" key={_id}>
-              <header>
-                <img src={avatar_url} alt="Fulano de tal"/>
-                <div className="user-info">
-                  <strong>{name}</strong>
-                  <span>{techs.join(', ')}</span>
-                </div>
-              </header>
-              <p>{bio}</p>
-              <a href={`https://github.com/${github_username}`}>Acessar perfil no Github</a>
-            </li>
-          ))}
+          <DevItems devs={devs} />
         </ul>
       </main>
     </div>
