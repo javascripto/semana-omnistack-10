@@ -8,6 +8,7 @@ import './Main.css';
 import './Sidebar.css';
 
 import avatar from './avatar.svg';
+import DevForm from './components/DevForm';
 
 const getDevExample = () => ({
   name: 'Fulano de Tal',
@@ -18,23 +19,10 @@ const getDevExample = () => ({
   _id: Math.random()
 });
 
-function App() {
-  const [devs, setDevs] = useState(Array.from([1, 2, 3], i => getDevExample()));
-  const [techs, setTechs] = useState('');
-  const [latitude, setLatitude] = useState('');
-  const [longitude, setLongitude] = useState('');
-  const [github_username, setGithubUsername] = useState('');
+const devsExample = Array.from([1, 2, 3], i => getDevExample());
 
-  useEffect(() => {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { coords: { latitude, longitude } } = position;
-        setLatitude(latitude);
-        setLongitude(longitude);
-      },
-      (error) => console.error(error)
-    );
-  }, []);
+function App() {
+  const [devs, setDevs] = useState(devsExample);
 
   useEffect(() => {
     (async function loadDevs() {
@@ -43,74 +31,16 @@ function App() {
     })();
   }, []);
 
-  async function handleAddDev(e) {
-    e.preventDefault();
-    const response = await api.post('/dev', {
-      github_username,
-      techs,
-      latitude,
-      longitude,
-    });
-
-    setDevs([...devs, response.data]);
-
-    setTechs('');
-    setGithubUsername('');
+  async function handleAddDev(data) {
+    const response = await api.post('/dev', data);
+    setDevs([...devs, response.data]);    
   }
 
   return (
     <div id="app">
       <aside>
         <strong>Cadastrar</strong>
-        <form onSubmit={handleAddDev}>
-          <div className="input-block">
-            <label htmlFor="github_username">Usuário do Github</label>
-            <input
-              type="text"
-              name="github_username"
-              id="github_username"
-              required
-              value={github_username}
-              onChange={e => setGithubUsername(e.target.value)}
-            />
-          </div>
-          <div className="input-block">
-            <label htmlFor="techs">Tecnologias</label>
-            <input
-              type="text"
-              name="techs"
-              id="techs"
-              required
-              value={techs}
-              onChange={e => setTechs(e.target.value)}
-            />
-          </div>
-          <div className="input-group">
-            <div className="input-block">
-              <label htmlFor="latitude">Latitude</label>
-              <input
-                type="text"
-                name="latitude"
-                id="latitude"
-                required 
-                value={latitude}
-                onChange={e => setLatitude(e.target.value)}
-              />
-            </div>
-            <div className="input-block">
-              <label htmlFor="longitude">Longitude</label>
-              <input
-                type="text"
-                name="longitude"
-                id="longitude"
-                required
-                value={longitude}
-                onChange={e => setLongitude(e.target.value)}
-              />
-            </div>
-          </div>
-          <button type="submit">Salvar</button>
-        </form>
+        <DevForm onSubmit={handleAddDev} />
       </aside>
       <main>
         <ul>
