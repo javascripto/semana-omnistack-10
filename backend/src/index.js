@@ -1,4 +1,5 @@
 require('dotenv').config({ path: '.env' });
+const path = require('path');
 const cors = require('cors');
 const express = require('express');
 const mongoose = require('mongoose');
@@ -13,6 +14,7 @@ mongoose.connect(getMongoURI(), {
 });
 
 app.use(cors());
+app.use('/', express.static(path.resolve(__dirname, '..', '..', 'web', 'build')));
 app.use(express.json());
 app.use(routes);
 
