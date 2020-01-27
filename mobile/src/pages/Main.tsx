@@ -4,11 +4,13 @@ import MapView, { Marker, Callout, Region } from 'react-native-maps';
 import { requestPermissionsAsync, getCurrentPositionAsync } from 'expo-location';
 import { StyleSheet, Image, View, Text, TextInput, TouchableOpacity, Keyboard } from 'react-native';
 
+import { Dev } from '../models/dev';
 import { api } from '../services/api';
 
 export function Main({ navigation: { navigate } }) {
-  const [currentRegion, setCurrentRegion] = useState(null);
-  const [devs, setDevs] = useState([]);
+  const [currentRegion, setCurrentRegion] = useState<Region>(null);
+  const [devs, setDevs] = useState<Dev[]>([]);
+  const [techs, setTechs] = useState('');
 
   useEffect(() => {
     async function loadInitialPosition() {
@@ -25,24 +27,28 @@ export function Main({ navigation: { navigate } }) {
         });
       }
     }
-    loadInitialPosition();   
+    loadInitialPosition();
+    loadAllDevs();
   }, []);
 
   async function loadDevs() {
     const { latitude, longitude } = currentRegion;
-    const response = await api.get('/search', {
-      params: {
-        latitude,
-        longitude,
-        techs: 'ReactJS'
-      }
+    const response = await api.get<{ devs: Dev[] }>('/search', {
+      params: { techs, latitude, longitude }
     });
 
-    setDevs(response.data);
+    setDevs(response.data.devs);
+    console.log(response.data.devs);
+  }
+
+  async function loadAllDevs() {
+    const { data } = await api.get<Dev[]>('/devs');
+    setDevs(data);
+    console.log(data);
   }
 
   function handleRegionChanged(region: Region) {
-    setCurrentRegion(region)
+    setCurrentRegion(region);
   }
 
   if (!currentRegion) {
@@ -55,33 +61,47 @@ export function Main({ navigation: { navigate } }) {
         style={styles.map}
         initialRegion={currentRegion}
         onRegionChangeComplete={handleRegionChanged}>
-        <Marker
-          coordinate={{ latitude: -23.6029458, longitude: -46.6945502 }}>
-          <Image
-            style={styles.avatar}
-            source={{ uri: 'https://avatars3.githubusercontent.com/u/16804522?s=460&v=4'}}
-          />
-          <Callout onPress={() => navigate('Profile', { github_username: 'javascripto' })}>
-            <View style={styles.callout}>
-              <Text style={styles.devName}>Yuri Almeida</Text>
-              <Text style={styles.devBio}>Não Tenho Bio aqui</Text>
-              <Text style={styles.devTechs}>Angular, Node.js, ReactJS, PHP, Python, Kotlin</Text>
-            </View>
-          </Callout>
-        </Marker>
+        {devs.map(({
+          _id, name, avatar_url,
+          bio, github_username, techs,
+          location: { coordinates: [longitude, latitude]
+        }}) => (
+          <Marker
+            key={_id}
+            coordinate={{ latitude, longitude }}>
+            <Image
+              style={styles.avatar}
+              source={{ uri: avatar_url}}
+            />
+            <Callout onPress={() => navigate('Profile', { github_username })}>
+              <View style={styles.callout}>
+                <Text style={styles.devName}>{name}</Text>
+                <Text style={styles.devBio}>{bio}</Text>
+                <Text style={styles.devTechs}>{techs.join(', ')}</Text>
+              </View>
+            </Callout>
+          </Marker>
+        )
+      )}
       </MapView>
       <View style={styles.searchForm}>
         <TextInput
-          style={styles.searchInput}
-          placeholder="Buscar devs por techs..."
-          placeholderTextColor="#999"
-          autoCapitalize="words"
+          value={techs}
           autoCorrect={false}
+          autoCapitalize="words"
+          onChangeText={setTechs}
+          style={styles.searchInput}
+          placeholderTextColor="#999"
+          placeholder="Buscar devs por techs..."
         />
         <TouchableOpacity
-          style={styles.loadButton}
-          onPress={() => {}}>
-          <MaterialIcons name="my-location"size={20} color="#fff" />
+          onPress={loadDevs}
+          style={styles.loadButton}>
+          <MaterialIcons
+            size={20}
+            color="#fff"
+            name="my-location"
+          />
         </TouchableOpacity>
       </View>
     </>
