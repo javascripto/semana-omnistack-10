@@ -4,6 +4,6 @@
     "main": "backend/src/index.js",
     "scripts": {
         "install": "cd web && npm install && npm run build && cd ../backend && npm install",
-        "start": "cd backend && npm run dev"
+        "start": "cd backend && npm start"
     }
 }
