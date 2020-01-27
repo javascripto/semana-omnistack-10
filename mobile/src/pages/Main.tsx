@@ -1,11 +1,14 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import React, { useState, useEffect } from 'react';
-import MapView, { Marker, Callout } from 'react-native-maps';
+import MapView, { Marker, Callout, Region } from 'react-native-maps';
 import { requestPermissionsAsync, getCurrentPositionAsync } from 'expo-location';
 import { StyleSheet, Image, View, Text, TextInput, TouchableOpacity, Keyboard } from 'react-native';
 
+import { api } from '../services/api';
+
 export function Main({ navigation: { navigate } }) {
   const [currentRegion, setCurrentRegion] = useState(null);
+  const [devs, setDevs] = useState([]);
 
   useEffect(() => {
     async function loadInitialPosition() {
@@ -25,6 +28,23 @@ export function Main({ navigation: { navigate } }) {
     loadInitialPosition();   
   }, []);
 
+  async function loadDevs() {
+    const { latitude, longitude } = currentRegion;
+    const response = await api.get('/search', {
+      params: {
+        latitude,
+        longitude,
+        techs: 'ReactJS'
+      }
+    });
+
+    setDevs(response.data);
+  }
+
+  function handleRegionChanged(region: Region) {
+    setCurrentRegion(region)
+  }
+
   if (!currentRegion) {
     return null;
   }
@@ -33,9 +53,10 @@ export function Main({ navigation: { navigate } }) {
     <>
       <MapView
         style={styles.map}
-        initialRegion={currentRegion}>
+        initialRegion={currentRegion}
+        onRegionChangeComplete={handleRegionChanged}>
         <Marker
-          coordinate={{ latitude: -23.6493986, longitude: -46.7730587 }}>
+          coordinate={{ latitude: -23.6029458, longitude: -46.6945502 }}>
           <Image
             style={styles.avatar}
             source={{ uri: 'https://avatars3.githubusercontent.com/u/16804522?s=460&v=4'}}
