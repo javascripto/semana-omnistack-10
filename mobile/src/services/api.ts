@@ -1,5 +1,4 @@
 import axios from 'axios';
+import { baseURL } from './baseURL';
 
-export const api = axios.create({
-  baseURL: 'https://devradar-omnistack-10.herokuapp.com'
-});
+export const api = axios.create({ baseURL });

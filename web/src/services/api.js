@@ -1,9 +1,6 @@
 import axios from 'axios';
+import { baseURL } from './baseURL';
 
-const api = axios.create({
-  baseURL: process.env.NODE_ENV === 'development'
-    ? 'http://localhost:3333'
-    : 'https://devradar-omnistack-10.herokuapp.com'
-});
+const api = axios.create({ baseURL });
 
 export default api;
