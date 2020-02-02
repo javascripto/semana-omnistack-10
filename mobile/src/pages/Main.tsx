@@ -6,6 +6,8 @@ import { StyleSheet, Image, View, Text, TextInput, TouchableOpacity, Keyboard } 
 
 import { Dev } from '../models/dev';
 import { api } from '../services/api';
+import { connect, disconnect, subscribeToNewDevs } from '../services/socket';
+
 
 export function Main({ navigation: { navigate } }) {
   const [currentRegion, setCurrentRegion] = useState<Region>(null);
@@ -31,6 +33,21 @@ export function Main({ navigation: { navigate } }) {
     loadAllDevs();
   }, []);
 
+  useEffect(() => {
+    subscribeToNewDevs(dev => setDevs([...devs, dev]))
+  }, [devs]);
+
+  function setupWebsocket() {
+    disconnect();
+
+    const { latitude, longitude } = currentRegion || {};
+    connect(
+      latitude,
+      longitude,
+      techs,
+    );
+  }
+
   async function loadDevs() {
     const { latitude, longitude } = currentRegion;
     const response = await api.get<{ devs: Dev[] }>('/search', {
@@ -38,13 +55,12 @@ export function Main({ navigation: { navigate } }) {
     });
 
     setDevs(response.data.devs);
-    console.log(response.data.devs);
+    setupWebsocket();
   }
 
   async function loadAllDevs() {
     const { data } = await api.get<Dev[]>('/devs');
     setDevs(data);
-    console.log(data);
   }
 
   function handleRegionChanged(region: Region) {

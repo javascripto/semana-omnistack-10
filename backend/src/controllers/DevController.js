@@ -1,6 +1,8 @@
 const axios = require('axios');
 const Dev = require('../models/Dev');
 
+const { findConnections, sendMessage } = require('../websocket'); 
+
 class DevController {
   static async index(request, response) {
     const devs = await Dev.find();
@@ -27,6 +29,12 @@ class DevController {
           coordinates: [longitude, latitude]
         },
       });
+
+      const sendSocketConnectionsTo = findConnections(
+        { latitude, longitude },
+        techs
+      );
+      sendMessage(sendSocketConnectionsTo, 'new-dev', dev);
     }
 
     return response.json(dev);
