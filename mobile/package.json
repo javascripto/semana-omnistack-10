@@ -9,6 +9,8 @@
   },
   "dependencies": {
     "@react-native-community/masked-view": "0.1.5",
+    "@types/node": "^13.7.0",
+    "@types/socket.io-client": "^1.4.32",
     "axios": "^0.19.2",
     "expo": "~36.0.0",
     "expo-location": "~8.0.0",
@@ -23,7 +25,8 @@
     "react-native-web": "~0.11.7",
     "react-native-webview": "7.4.3",
     "react-navigation": "^4.0.10",
-    "react-navigation-stack": "^2.0.16"
+    "react-navigation-stack": "^2.0.16",
+    "socket.io-client": "^2.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
