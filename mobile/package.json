@@ -11,7 +11,7 @@
     "@react-native-community/masked-view": "0.1.5",
     "@types/node": "^13.7.0",
     "@types/socket.io-client": "^1.4.32",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "expo": "~36.0.0",
     "expo-location": "~8.0.0",
     "react": "~16.9.0",
